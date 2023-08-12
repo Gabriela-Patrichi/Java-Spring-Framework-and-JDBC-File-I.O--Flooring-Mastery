@@ -13,7 +13,7 @@ public class TaxDto {
     private BigDecimal taxRate;
 
 
-    //this constructor will be used for Map<String,BigDecimal> - only need these var for the OrderDto
+    //constructor - only need these var for the OrderDto
     public TaxDto(String stateAbbreviation, BigDecimal taxRate) {
         this.stateAbbreviation = stateAbbreviation;
         this.taxRate = taxRate;
@@ -38,9 +38,7 @@ public class TaxDto {
 
     @Override
     public String toString() {
-        return "TaxDto{" +
-                "stateAbbreviation='" + stateAbbreviation + '\'' +
-                ", taxRate=" + taxRate +
-                '}';
+        return stateAbbreviation +
+                "," + taxRate;
     }
 }

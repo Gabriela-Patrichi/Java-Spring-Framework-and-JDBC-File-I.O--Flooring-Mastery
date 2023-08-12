@@ -9,17 +9,17 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-public class OrderServiceImpl implements OrderService{
+public class OrderServiceImpl implements OrderService {
 
     //these will be required when adding a new order , or when editing a new order
-   // TaxService taxService = new TaxServiceImpl();
+    //service to service communication
+    // TaxService taxService = new TaxServiceImpl();
     //ProductService productService = new ProducServiceImpl();
 
     @Override
     public List<OrderDto> getAlLOrdersByDate(LocalDate orderDate) {
         return null;
     }
-
 
 
     @Override

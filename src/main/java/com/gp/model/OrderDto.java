@@ -8,7 +8,7 @@ import java.util.Map;
 public class OrderDto {
     private Integer orderNumber;
     private String customerName;
-    private TaxDao taxDetails; // DTO
+    private TaxDto taxDetails; // DTO
     private ProductDto productDetails;
     private BigDecimal area;
     private BigDecimal materialCost; // = area * costPerSquareFoot (ProductDto.getCostPerSquareFoot())
@@ -18,7 +18,7 @@ public class OrderDto {
 
 
     //public Constructor
-    public OrderDto(Integer orderNumber, String customerName, TaxDao taxDetails, ProductDto productDetails, BigDecimal area, BigDecimal materialCost, BigDecimal laborCost, BigDecimal tax, BigDecimal total) {
+    public OrderDto(Integer orderNumber, String customerName, TaxDto taxDetails, ProductDto productDetails, BigDecimal area, BigDecimal materialCost, BigDecimal laborCost, BigDecimal tax, BigDecimal total) {
         this.orderNumber = orderNumber;
         this.customerName = customerName;
         this.taxDetails = taxDetails;
@@ -48,11 +48,11 @@ public class OrderDto {
         this.customerName = customerName;
     }
 
-    public TaxDao getTaxDetails() {
+    public TaxDto getTaxDetails() {
         return taxDetails;
     }
 
-    public void setTaxDetails(TaxDao taxDetails) {
+    public void setTaxDetails(TaxDto taxDetails) {
         this.taxDetails = taxDetails;
     }
 

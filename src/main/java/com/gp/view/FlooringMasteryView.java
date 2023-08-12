@@ -17,7 +17,7 @@ public class FlooringMasteryView {
 
     public void runMenu(){
 
-        /*  // TAX SERVICE methods testing
+         // TAX SERVICE methods testing
         TaxService taxService=null;
         System.out.println("your tax info is as following:");
         try {
@@ -40,12 +40,12 @@ public class FlooringMasteryView {
                 System.out.println ( k + " " + showTaxInfo.get(k));
             }
         }
-        */
+
 
 
         //PRODUCT TESTING
         ProductService productService;
-        System.out.println("your products' info is as following:");
+        System.out.println("Your products' info is as following:");
 
         try {
             productService= new ProductServiceImpl();
@@ -53,9 +53,10 @@ public class FlooringMasteryView {
             throw new RuntimeException(e);
         }
 
-        System.out.println("Assumin data has been read from the file, info is as following:");
+        System.out.println("Assuming data has been read from the file, info is as following:");
 
         Map<String, ProductDto> showProductInfo =productService.getAllProductsInfo();
+
         if (showProductInfo.isEmpty()){
             System.out.println("There are no entries in the Products information file.");
         } else {

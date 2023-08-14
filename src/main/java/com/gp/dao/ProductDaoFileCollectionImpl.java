@@ -30,9 +30,56 @@ public class ProductDaoFileCollectionImpl implements ProductDao{
         //3. create a BufferReader object
         BufferedReader br = new BufferedReader(fr);
 
-        String line = br.readLine(); //store each line of the BufferReader in String
+        String line =null; //store each line of the BufferReader in String
         //4. read line by line
-        while (line != null) {
+        while ((line = br.readLine()) != null) {
+
+          //  System.out.println(line);
+
+            //tokenize values, using  < , > as delimiter
+            StringTokenizer st = new StringTokenizer(line, ",");
+
+            //productType
+            String productType = st.nextToken();
+
+            //costPerSquareFoot
+            String cost = st.nextToken();
+            //convert String to BigDecimal using BigDecimal constructor
+            BigDecimal costPerSquareFoot = new BigDecimal(cost);
+
+            //laborCostPerSquareFoot
+            String laborCost = st.nextToken();
+            BigDecimal laborCostPerSquareFoot = new BigDecimal(laborCost);
+
+            //create new ProductDto object using the read values
+            ProductDto myProductDto = new ProductDto(productType, costPerSquareFoot, laborCostPerSquareFoot);
+
+            //add tax object to collection
+            productFileData.put(productType, myProductDto);
+        }
+    }
+
+
+
+    //FOR UNIT TESTING PURPOSES
+
+    public ProductDaoFileCollectionImpl(String testFileName) throws IOException {
+
+        //1. create a File Object
+        File myFile = new File(testFileName);
+        myFile.createNewFile(); // IOException
+
+        //2.create a FileReader object - IOException
+        FileReader fr = new FileReader(myFile);
+
+        //3. create a BufferReader object
+        BufferedReader br = new BufferedReader(fr);
+
+        String line =null; //store each line of the BufferReader in String
+        //4. read line by line
+        while ((line = br.readLine()) != null) {
+
+            //  System.out.println(line);
 
             //tokenize values, using  < , > as delimiter
             StringTokenizer st = new StringTokenizer(line, ",");

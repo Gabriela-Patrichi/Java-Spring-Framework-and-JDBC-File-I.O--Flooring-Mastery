@@ -26,7 +26,7 @@ public class FlooringMasteryView {
             throw new RuntimeException(e);
         }
 
-        System.out.println("your tax info is as following:");
+        System.out.println("your tax info for the orders is as following:");
 
         Map<String, BigDecimal> showTaxInfo =taxService.getAllTaxInfo();
         if (showTaxInfo.isEmpty()){
@@ -64,8 +64,12 @@ public class FlooringMasteryView {
             Set<String> keys = showProductInfo.keySet();
             // print the keys to the screen
             for (String k : keys) {
-                System.out.println ( k + " " + showProductInfo.get(k));
+                System.out.println ("Key product "+ k + ": " + showProductInfo.get(k));
             }
         }
+
+
+
+
     }
 }

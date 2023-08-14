@@ -42,8 +42,8 @@ public class ProductDto {
     @Override
     public String toString() {
         return
-                "productType=" + productType +
-                ", costPerSquareFoot=" + costPerSquareFoot +
-                ", laborCostPerSquareFoot=" + laborCostPerSquareFoot;
+                 productType + ","+
+                costPerSquareFoot + ","+
+                laborCostPerSquareFoot;
     }
 }

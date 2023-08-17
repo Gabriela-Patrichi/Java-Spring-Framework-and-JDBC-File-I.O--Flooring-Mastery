@@ -3,10 +3,11 @@ package com.gp.model;
 import com.gp.dao.TaxDao;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Map;
 
 public class OrderDto {
-    private Integer orderNumber;
+    private int orderNumber;
     private String customerName;
     private TaxDto taxDetails; // DTO
     private ProductDto productDetails;
@@ -16,9 +17,10 @@ public class OrderDto {
     private BigDecimal tax; // materialCost + laborCost) * (taxRate/100) (TaxDto.getTaxRate())
     private BigDecimal total; // materialCost + laborCost + tax)
 
+    private LocalDate orderDate;
 
     //public Constructor
-    public OrderDto(Integer orderNumber, String customerName, TaxDto taxDetails, ProductDto productDetails, BigDecimal area, BigDecimal materialCost, BigDecimal laborCost, BigDecimal tax, BigDecimal total) {
+    public OrderDto(int orderNumber, String customerName, TaxDto taxDetails, ProductDto productDetails, BigDecimal area, BigDecimal materialCost, BigDecimal laborCost, BigDecimal tax, BigDecimal total) {
         this.orderNumber = orderNumber;
         this.customerName = customerName;
         this.taxDetails = taxDetails;
@@ -28,15 +30,16 @@ public class OrderDto {
         this.laborCost = laborCost;
         this.tax = tax;
         this.total = total;
+
     }
 
     // getters and setters to access the private variables
 
-    public Integer getOrderNumber() {
+    public int getOrderNumber() {
         return orderNumber;
     }
 
-    public void setOrderNumber(Integer orderNumber) {
+    public void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
     }
 
@@ -104,18 +107,25 @@ public class OrderDto {
         this.total = total;
     }
 
+
+    public LocalDate getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(LocalDate orderDate) {
+        this.orderDate = orderDate;
+    }
+
     @Override
     public String toString() {
-        return "OrderDto{" +
-                "orderNumber=" + orderNumber +
-                ", customerName='" + customerName + '\'' +
-                ", taxDetails=" + taxDetails +
-                ", productDetails=" + productDetails +
-                ", area=" + area +
-                ", materialCost=" + materialCost +
-                ", laborCost=" + laborCost +
-                ", tax=" + tax +
-                ", total=" + total +
-                '}';
+        return  orderNumber +
+                "," + customerName +
+                "," + taxDetails +
+                "," + productDetails +
+                "," + area +
+                "," + materialCost +
+                "," + laborCost +
+                "," + tax +
+                "," + total;
     }
 }

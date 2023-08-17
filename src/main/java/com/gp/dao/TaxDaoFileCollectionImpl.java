@@ -31,7 +31,7 @@ public class TaxDaoFileCollectionImpl implements TaxDao {
         String line = null; //store each line of the BufferReader in String
         //4. read line by line
 
-        while((line=br.readLine()) != null) {
+        while ((line = br.readLine()) != null) {
 
             System.out.println(line);
 
@@ -60,7 +60,6 @@ public class TaxDaoFileCollectionImpl implements TaxDao {
     }
 
 
-
     //FOR UNIT TESTING PURPOSES
 
     public TaxDaoFileCollectionImpl(String testFileName) throws IOException {
@@ -78,7 +77,7 @@ public class TaxDaoFileCollectionImpl implements TaxDao {
         String line = null; //store each line of the BufferReader in String
         //4. read line by line
 
-        while((line=br.readLine()) != null) {
+        while ((line = br.readLine()) != null) {
 
             System.out.println(line);
 

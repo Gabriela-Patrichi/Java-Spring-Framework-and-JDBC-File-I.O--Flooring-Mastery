@@ -1,9 +1,11 @@
 package com.gp.service;
 
 import com.gp.dao.OrderDao;
+import com.gp.dao.OrderDaoFileCollectionImpl;
 import com.gp.model.OrderDto;
 import com.gp.model.ProductDto;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -16,18 +18,22 @@ public class OrderServiceImpl implements OrderService {
     // TaxService taxService = new TaxServiceImpl();
     //ProductService productService = new ProducServiceImpl();
 
-    @Override
-    public List<OrderDto> getAlLOrdersByDate(LocalDate orderDate) {
-        return null;
+    OrderDao orderDao;
+
+    public OrderServiceImpl() throws IOException {
+        // LocalDate orderFileName;
+        orderDao = new OrderDaoFileCollectionImpl();
     }
 
+    @Override
+    public List<OrderDto> getAlLOrdersByDate(LocalDate orderDate) throws IOException { //propagate exception
+        List<OrderDto> returnedOrders = orderDao.getAlLOrdersByDate(orderDate);
+        return returnedOrders;
+    }
 
     @Override
-    public OrderDto addNewOrder(OrderDto newOrder) {
-        // here use taxService.getAllTaxInfo();
-        // the TaxService will reach out to the TaxDoa and call getAllTaxInfo();
-
-        return null;
+    public OrderDto addNewOrder(OrderDto newOrder) throws IOException { //propagate exception
+        return orderDao.addNewOrder(newOrder);
     }
 
     @Override
@@ -46,7 +52,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean writeToFile() {
-        return false;
+    public boolean writeToFile() throws IOException { //propagate exception
+        return orderDao.writeToFile();
     }
 }

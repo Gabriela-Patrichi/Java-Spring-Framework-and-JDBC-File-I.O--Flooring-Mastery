@@ -43,8 +43,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDto updateOrder(OrderDto updateOrder) {
-        return null;
+    public OrderDto updateOrder(OrderDto updatedOrder) throws IOException {
+
+        return orderDao.updateOrder(updatedOrder);
     }
 
     @Override

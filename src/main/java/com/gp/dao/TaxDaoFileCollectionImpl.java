@@ -33,7 +33,7 @@ public class TaxDaoFileCollectionImpl implements TaxDao {
 
         while ((line = br.readLine()) != null) {
 
-            System.out.println(line);
+            //System.out.println(line); - only for testing
 
             //tokenize values, using  < , > as delimiter
             StringTokenizer st = new StringTokenizer(line, ",");
@@ -61,7 +61,6 @@ public class TaxDaoFileCollectionImpl implements TaxDao {
 
 
     //FOR UNIT TESTING PURPOSES
-
     public TaxDaoFileCollectionImpl(String testFileName) throws IOException {
 
         //1. create a File Object

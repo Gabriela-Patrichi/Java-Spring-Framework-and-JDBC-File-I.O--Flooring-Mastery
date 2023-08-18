@@ -235,7 +235,7 @@ public class OrderDaoFileCollectionImpl implements OrderDao {
         //call readOrdersFile() , with orderDate and shouldCreate false
         readOrdersFile(orderDate, false);
 
-        //trasverse the collection of the same date orders and search for the order number
+        //traverse the collection of the same date orders and search for the order number
         for(int i=0; i< ordersOnSameDate.size();i++){
             if (ordersOnSameDate.get(i).getOrderNumber()==orderNumber){ //if order numbers match
                 returnedOrderDto= ordersOnSameDate.get(i);
@@ -245,10 +245,21 @@ public class OrderDaoFileCollectionImpl implements OrderDao {
     }
 
     @Override
-    public OrderDto updateOrder(OrderDto updateOrder) {
+    public OrderDto updateOrder(OrderDto updatedOrder) throws IOException {
 
-        return null;
+        //traverse the collection to search for the required OrderDto (identifiable by the unique order number)
+        //when found, replace the object with the updated one
+        for(int i=0; i< ordersOnSameDate.size(); i++){
+            if(ordersOnSameDate.get(i).getOrderNumber() == updatedOrder.getOrderNumber()){
+                updatedOrder=ordersOnSameDate.get(i);
+//                ordersOnSameDate.set(i,updatedOrder);
+            }
+        }
+        //save to file
+        writeToFile();
+        return updatedOrder;
     }
+
 
     @Override
     public void removeOrder(LocalDate orderDate, Integer orderNumber) {

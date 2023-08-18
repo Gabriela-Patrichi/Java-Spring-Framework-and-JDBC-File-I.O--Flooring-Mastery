@@ -40,6 +40,17 @@ public class FlooringMasteryView {
             System.out.println("There was an error in reading the file. Please try again.");
         }
 
+
+        //call getAllTaxInfo() from TaxService , which will return a map
+        Map<String, BigDecimal> taxInfoCollection = taxService.getAllTaxInfo();
+        // get the Set of keys from the map
+        Set<String> keys = taxInfoCollection.keySet();
+
+        //similarly for products
+        Map<String, ProductDto> productInfoMap = productService.getAllProductsInfo();
+        // get the Set of keys from the map
+        Set<String> productKeys = productInfoMap.keySet();
+
         char continueOption = 'n';
         do {
             System.out.println(" * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
@@ -60,7 +71,7 @@ public class FlooringMasteryView {
 
                 switch (userOption) {
                     case 1:
-                        System.out.println("Enter the date for which you wish to display the orders:");
+                        System.out.println("Enter the date for which you wish to display the orders: (YYYY-MM-DD");
                         System.out.println("YYYY\n" +
                                 "MM\n" +
                                 "DD");
@@ -75,14 +86,15 @@ public class FlooringMasteryView {
                             // System.out.println("OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total");
                             //print out order's values one by one, on separate lines, commenting what they represent, to enrich the user experience
                             for (OrderDto order : printOrders) {
-                                System.out.println("Order number: " + order.getOrderNumber() + "\nCustomer name: " + order.getCustomerName()
+                                System.out.println("\nOrder number: " + order.getOrderNumber() + "\nCustomer name: " + order.getCustomerName()
                                         + "\nState: " + order.getTaxDetails().getStateAbbreviation()
                                         + "\nTax rate: " + order.getTaxDetails().getTaxRate()
                                         + "\nProduct type: " + order.getProductDetails().getProductType() + "\nArea: " + order.getArea()
                                         + "\nCost per square foot: " + order.getProductDetails().getCostPerSquareFoot()
                                         + "\nLabor cost per square foot" + order.getProductDetails().getLaborCostPerSquareFoot()
                                         + "\nMaterial cost: " + order.getMaterialCost() + "\nLabor cost: " + order.getLaborCost()
-                                        + "\nTax: " + order.getTax() + "\nTotal: " + order.getTotal());
+                                        + "\nTax: " + order.getTax() + "\nTotal: " + order.getTotal()
+                                        + "\n--------------------------------------------");
                             }
                         } catch (IOException e) {
                             System.out.println("Sorry, there are no existing orders for that date.");
@@ -112,10 +124,6 @@ public class FlooringMasteryView {
                         }
 
                         //TAXES
-                        //call getAllTaxInfo() from TaxService , which will return a map
-                        Map<String, BigDecimal> taxInfoCollection = taxService.getAllTaxInfo();
-                        // get the Set of keys from the map
-                        Set<String> keys = taxInfoCollection.keySet();
 
                         //display choices to the user and prompt to choose one of the options
                         System.out.println("Enter Tax State: Option are limited to : " + keys);
@@ -138,9 +146,7 @@ public class FlooringMasteryView {
 
                         //PRODUCT
                         System.out.println("Next, here is the list of available products and pricing information to choose from.");
-                        Map<String, ProductDto> productInfoMap = productService.getAllProductsInfo();
-                        // get the Set of keys from the map
-                        Set<String> productKeys = productInfoMap.keySet();
+
                         // print the keys to the screen - to allow user to choose the product
                         for (String k : productKeys) {
                             System.out.println("Option " + k + ": " + productInfoMap.get(k));
@@ -163,7 +169,7 @@ public class FlooringMasteryView {
                         }
 
                         //Area
-                        System.out.println("Next, please input the area (minimum 100)");
+                        System.out.println("Next, please input the area (minimum 100).");
                         int areaInt = input.nextInt();
                         if (areaInt < 100) {
                             System.out.println("Sorry, area requirements have not been met(minimum 100).");
@@ -173,20 +179,20 @@ public class FlooringMasteryView {
                         BigDecimal area = BigDecimal.valueOf(areaInt); //convert int to BigDecimal
 
                         //material cost = area * costPerSquareFoot - BigDecimal does not take "*" as operand; instead multiply();
-                        // call getCistPerSquareFoot() of the above created ProductDto
+                        // call getCostPerSquareFoot() of the above created ProductDto
                         BigDecimal materialCost = area.multiply(productDetails.getCostPerSquareFoot());
 
                         //similarly to laborCost
                         BigDecimal laborCost = area.multiply(productDetails.getLaborCostPerSquareFoot());
 
                         //tax = (materialCost + laborCost) * (taxRate/100) - will call TaxDto this time
-                        // transfor int 100 to a BigDcimal in oredr to perform division
+                        // transform int 100 to a BigDecimal in order to perform division
                         BigDecimal tax = (materialCost.add(laborCost)).multiply(taxDetails.getTaxRate().divide(BigDecimal.valueOf(100)));
 
                         //total
                         BigDecimal total = materialCost.add(laborCost).add(tax);
 
-                        //set OoderNumber initially to a dummy value, however this will be checked upon calling the addOrder(),
+                        //set OrderNumber initially to a dummy value, however this will be checked upon calling the addOrder(),
                         //if this is the first order, it will assign value 1 , else it will increment the orderNumber comparing the last entered order id
                         int orderNumber = 0;
 
@@ -206,7 +212,8 @@ public class FlooringMasteryView {
                                 + "\nLabor cost per square foot" + myOrderDto.getProductDetails().getLaborCostPerSquareFoot()
                                 + "\nMaterial cost: " + myOrderDto.getMaterialCost() + "\nLabor cost: " + myOrderDto.getLaborCost()
                                 + "\nTax: " + myOrderDto.getTax() + "\nTotal: " + myOrderDto.getTotal()
-                                + ", Order Date: " + orderDtoDate + ".");
+                                + ", Order Date: " + orderDtoDate + "."
+                                + "\n--------------------------------------------");
 
                         System.out.println("Do you wish to add this order to the system? y/n");
                         char choice = input.next().charAt(0);
@@ -214,20 +221,18 @@ public class FlooringMasteryView {
                             try { // IOException handling
                                 orderService.addNewOrder(myOrderDto);
                                 System.out.println("Order added to the system.");
-                            }
-                            catch (IOException e) {
+                            } catch (IOException e) {
                                 e.printStackTrace();
                                 System.out.println("Something went wrong when trying to save the order to file. Please try again.");
                             }
-                        }
-                        else {
+                        } else {
                             System.out.println("Adding new order was cancelled. Redirecting you to the main menu...");
                             runMenu();
                         }
                         break;
                     case 3:
                         System.out.println("Edit an order:");
-    // first, prompt the user for te order date and order number
+                        // first, prompt the user for te order date and order number
                         System.out.println("Please insert the date of the order: (YYYY-MM-DD)");
                         input.nextLine();
                         String date = input.nextLine();
@@ -236,15 +241,15 @@ public class FlooringMasteryView {
                         int orderbyNumber = input.nextInt();
 
                         //call retrieveOrder() and store its return value in order DTO (retrievedOrder)
-                        OrderDto retrievedOrder = orderService.retrieveOrder(orderByDate,orderbyNumber);
+                        OrderDto retrievedOrder = orderService.retrieveOrder(orderByDate, orderbyNumber);
 
                         //check if the value is null
-                        if(retrievedOrder==null){
+                        if (retrievedOrder == null) {
                             System.out.println("Could not locate an order with these details.");
                             break;
                         }
                         //if the order is found display to user
-                        else{
+                        else {
                             System.out.println("Order found!");
                             System.out.println("Customer name: " + retrievedOrder.getCustomerName()
                                     + "\nState: " + retrievedOrder.getTaxDetails().getStateAbbreviation()
@@ -253,18 +258,111 @@ public class FlooringMasteryView {
                                     + "\nCost per square foot: " + retrievedOrder.getProductDetails().getCostPerSquareFoot()
                                     + "\nLabor cost per square foot" + retrievedOrder.getProductDetails().getLaborCostPerSquareFoot()
                                     + "\nMaterial cost: " + retrievedOrder.getMaterialCost() + "\nLabor cost: " + retrievedOrder.getLaborCost()
-                                    + "\nTax: " + retrievedOrder.getTax() + "\nTotal: " + retrievedOrder.getTotal() + ".");
+                                    + "\nTax: " + retrievedOrder.getTax() + "\nTotal: " + retrievedOrder.getTotal() + "."
+                                    + "\n--------------------------------------------");
                             System.out.println("Do you wish to update this order? y/n");
                             char updateChoice = input.next().charAt(0);
-                            if(updateChoice=='y'){
-                                System.out.println("Please update the customer name: ");
+                            if (updateChoice == 'y') {
+                                System.out.println("The customer name for this order is " + retrievedOrder.getCustomerName() + ".");
+                                System.out.println("Please update the customer name. Alternatively, press Enter to skip to the next details.");
+                                input.nextLine();
+                                String updateName = input.nextLine();
+                                if (updateName.isEmpty()) {
+                                    retrievedOrder.setCustomerName(retrievedOrder.getCustomerName());
+                                } else {
+                                    retrievedOrder.setCustomerName(updateName);
+                                }
 
-                            }
-                            else {
+                                //update state option
+                                //display current state
+                                System.out.println("The state set for this order is " + retrievedOrder.getTaxDetails().getStateAbbreviation() + ".");
+                                //display available choices to the user
+                                System.out.println("Please update the state, choosing one of the following options: " + keys + ". Please bear in mind that options are case sensitive. \nAlternatively, press Enter to skip to the next details.");
+                                String updatedState = input.nextLine();
+                                if (updatedState.isEmpty()) {
+                                    retrievedOrder.setTaxDetails(retrievedOrder.getTaxDetails());
+                                }
+                                //if user chooses a different state , set the state as new value in TaxDTO
+                                //and then set new TaxDTO as the new taxDetails object within OrderDto object
+                                else {
+                                    retrievedOrder.getTaxDetails().setStateAbbreviation(updatedState);
+                                    taxDetails = new TaxDto(updatedState, taxInfoCollection.get(updatedState));
+                                    retrievedOrder.setTaxDetails(retrievedOrder.getTaxDetails());
+                                }
+
+                                //Product type
+                                //display current product
+                                System.out.println("The current product set for this order is " + retrievedOrder.getProductDetails().getProductType() + ".");
+                                //display the available choices to the user
+                                System.out.println("Please update the product type, choosing one of the following options: " + productKeys + "(case sensitive) \nAlternatively, press Enter to skip to the next details.");
+                                String updatedProduct = input.nextLine();
+                                //if empty, keep current details
+                                if (updatedProduct.isEmpty()) {
+                                    retrievedOrder.setProductDetails(retrievedOrder.getProductDetails());
+                                } else {
+                                    //set the new productDTO corresponding to the user choice (which is the key tp productDTo collection)
+                                    productDetails = new ProductDto(updatedProduct, productInfoMap.get(updatedProduct).getCostPerSquareFoot(), productInfoMap.get(updatedProduct).getLaborCostPerSquareFoot());
+
+                                    //set the new ProductDto as the new productDetaild object composing Order Dto
+                                    retrievedOrder.setProductDetails(retrievedOrder.getProductDetails());
+                                }
+
+                                //AREA
+                                System.out.println("The area set for this order is " + retrievedOrder.getArea() + ".");
+                                System.out.println("Please update the area (100 minimum). Alternatively, press Enter to skip to the next details.");
+                                String updatedAreaString = input.nextLine();
+                                if (updatedAreaString.isEmpty()) {
+                                    retrievedOrder.setArea(retrievedOrder.getArea());
+                                } else {
+                                    BigDecimal updatedArea = new BigDecimal(updatedAreaString);
+                                    retrievedOrder.setArea(updatedArea);
+                                }
+
+                                //Recalculate and set the other values as required, passing the new values of variables and/or objects
+                                materialCost = retrievedOrder.getArea().multiply(retrievedOrder.getProductDetails().getCostPerSquareFoot());
+                                retrievedOrder.setMaterialCost(materialCost);
+
+                                laborCost = retrievedOrder.getArea().multiply(retrievedOrder.getProductDetails().getLaborCostPerSquareFoot());
+                                retrievedOrder.setLaborCost(laborCost);
+
+                                tax = (materialCost.add(laborCost)).multiply(retrievedOrder.getTaxDetails().getTaxRate().divide(BigDecimal.valueOf(100)));
+                                retrievedOrder.setTax(tax);
+
+                                total = materialCost.add(laborCost).add(tax);
+                                retrievedOrder.setTotal(total);
+
+                                //form the new OrderDto
+                                retrievedOrder = new OrderDto(retrievedOrder.getOrderNumber(), retrievedOrder.getCustomerName(), retrievedOrder.getTaxDetails(), retrievedOrder.getProductDetails(), retrievedOrder.getArea(), retrievedOrder.getMaterialCost(), retrievedOrder.getLaborCost(), retrievedOrder.getTax(), retrievedOrder.getTotal());
+
+                                retrievedOrder.setOrderDate(retrievedOrder.getOrderDate());
+
+                                // display the new order to user:
+                                System.out.println("Here are the edited order details: ");
+                                System.out.println("Customer name: " + retrievedOrder.getCustomerName()
+                                        + "\nState: " + retrievedOrder.getTaxDetails().getStateAbbreviation()
+                                        + "\nTax rate: " + retrievedOrder.getTaxDetails().getTaxRate()
+                                        + "\nProduct type: " + retrievedOrder.getProductDetails().getProductType() + "\nArea: " + retrievedOrder.getArea()
+                                        + "\nCost per square foot: " + retrievedOrder.getProductDetails().getCostPerSquareFoot()
+                                        + "\nLabor cost per square foot:" + retrievedOrder.getProductDetails().getLaborCostPerSquareFoot()
+                                        + "\nMaterial cost: " + retrievedOrder.getMaterialCost() + "\nLabor cost: " + retrievedOrder.getLaborCost()
+                                        + "\nTax: " + retrievedOrder.getTax() + "\nTotal: " + retrievedOrder.getTotal()
+                                        + "\n--------------------------------------------");
+
+                                System.out.println("Do you wish to save this order version and add it to the system? y/n");
+                                char updateOrderChoice = input.next().charAt(0);
+                                if (updateOrderChoice == 'y') {
+                                    orderService.updateOrder(retrievedOrder);
+                                    System.out.println("The order has been updated successfully and saved to file.");
+                                    break;
+                                } else {
+                                    System.out.println("Update order operation cancelled. No details have been saved.");
+                                    break;
+                                }
+                            } else {
                                 break;
                             }
                         }
-                        break;
+                        //   break;
                     case 4:
                         System.out.println("Remove an order:");
                         break;

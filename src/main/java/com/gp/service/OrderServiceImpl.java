@@ -25,6 +25,12 @@ public class OrderServiceImpl implements OrderService {
         orderDao = new OrderDaoFileCollectionImpl();
     }
 
+
+    @Override
+    public List<OrderDto> readOrdersFile(LocalDate ordersDate, boolean shouldCreate) throws IOException {
+        return orderDao.readOrdersFile(ordersDate,shouldCreate);
+    }
+
     @Override
     public List<OrderDto> getAlLOrdersByDate(LocalDate orderDate) throws IOException { //propagate exception
         List<OrderDto> returnedOrders = orderDao.getAlLOrdersByDate(orderDate);
@@ -49,12 +55,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void removeOrder(LocalDate orderDate, Integer orderNumber) {
-
+    public void removeOrder(LocalDate orderDate, Integer orderNumber) throws IOException {
+        orderDao.removeOrder(orderDate,orderNumber);
     }
 
     @Override
     public boolean writeToFile() throws IOException { //propagate exception
         return orderDao.writeToFile();
     }
+
+
 }

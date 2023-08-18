@@ -8,6 +8,7 @@ import com.gp.service.*;
 import javax.sound.midi.Soundbank;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Array;
 import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.util.*;
@@ -71,36 +72,39 @@ public class FlooringMasteryView {
 
                 switch (userOption) {
                     case 1:
-                        System.out.println("Enter the date for which you wish to display the orders: (YYYY-MM-DD");
-                        System.out.println("YYYY\n" +
-                                "MM\n" +
-                                "DD");
-                        LocalDate orderDate = LocalDate.of(input.nextInt(), input.nextInt(), input.nextInt());
+                        System.out.println("Enter the date for which you wish to display the orders: (YYYY-MM-DD)");
+                        input.nextLine();
+                        String ordersDateString = input.nextLine();
+                        LocalDate ordersDate = LocalDate.parse(ordersDateString);
                         try {
-                            List<OrderDto> printOrders = orderService.getAlLOrdersByDate(orderDate);
+                            List<OrderDto> printOrders = orderService.getAlLOrdersByDate(ordersDate);
                             if (printOrders.isEmpty()) {
                                 System.out.println("Sorry, there are no existing orders for that date.");
                                 break;
-                            }
-                            System.out.println("Order(s) retrieved:");
-                            // System.out.println("OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total");
-                            //print out order's values one by one, on separate lines, commenting what they represent, to enrich the user experience
-                            for (OrderDto order : printOrders) {
-                                System.out.println("\nOrder number: " + order.getOrderNumber() + "\nCustomer name: " + order.getCustomerName()
-                                        + "\nState: " + order.getTaxDetails().getStateAbbreviation()
-                                        + "\nTax rate: " + order.getTaxDetails().getTaxRate()
-                                        + "\nProduct type: " + order.getProductDetails().getProductType() + "\nArea: " + order.getArea()
-                                        + "\nCost per square foot: " + order.getProductDetails().getCostPerSquareFoot()
-                                        + "\nLabor cost per square foot" + order.getProductDetails().getLaborCostPerSquareFoot()
-                                        + "\nMaterial cost: " + order.getMaterialCost() + "\nLabor cost: " + order.getLaborCost()
-                                        + "\nTax: " + order.getTax() + "\nTotal: " + order.getTotal()
-                                        + "\n--------------------------------------------");
+                            } else {
+                                System.out.println("Order(s) retrieved:");
+                                // System.out.println("OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total");
+                                //print out order's values one by one, on separate lines, commenting what they represent, to enrich the user experience
+                                for (OrderDto order : printOrders) {
+                                    System.out.println("\nOrder number: " + order.getOrderNumber() + "\nCustomer name: " + order.getCustomerName()
+                                            + "\nState: " + order.getTaxDetails().getStateAbbreviation()
+                                            + "\nTax rate: " + order.getTaxDetails().getTaxRate()
+                                            + "\nProduct type: " + order.getProductDetails().getProductType() + "\nArea: " + order.getArea()
+                                            + "\nCost per square foot: " + order.getProductDetails().getCostPerSquareFoot()
+                                            + "\nLabor cost per square foot: " + order.getProductDetails().getLaborCostPerSquareFoot()
+                                            + "\nMaterial cost: " + order.getMaterialCost() + "\nLabor cost: " + order.getLaborCost()
+                                            + "\nTax: " + order.getTax() + "\nTotal: " + order.getTotal()
+                                            + "\n--------------------------------------------");
+                                }
+                                List<OrderDto> collectionToClear = orderService.readOrdersFile(ordersDate,false);
+                                //clear the collection before returning to main menu
+                                collectionToClear.clear();
+                                break;
                             }
                         } catch (IOException e) {
                             System.out.println("Sorry, there are no existing orders for that date.");
                             break;
                         }
-                        break;
 
                     case 2:
                         //tax and product objects, which make part of the order object
@@ -109,7 +113,6 @@ public class FlooringMasteryView {
                         OrderDto myOrderDto = null;
 
                         System.out.println("Let's enter the new order details!");
-
                         System.out.println("First, enter the order's date: (YYYY-MM-DD)");
                         input.nextLine();
                         String dateString = input.nextLine();
@@ -204,15 +207,15 @@ public class FlooringMasteryView {
 
                         System.out.println("Here are the new order details: ");
                         //Refactored myOrderDto.toString() , for a more friendly user experience
-                        System.out.println("Customer name: " + myOrderDto.getCustomerName()
+                        System.out.println("Order Date: " + orderDtoDate
+                                + "\nCustomer name: " + myOrderDto.getCustomerName()
                                 + "\nState: " + myOrderDto.getTaxDetails().getStateAbbreviation()
                                 + "\nTax rate: " + myOrderDto.getTaxDetails().getTaxRate()
                                 + "\nProduct type: " + myOrderDto.getProductDetails().getProductType() + "\nArea: " + myOrderDto.getArea()
                                 + "\nCost per square foot: " + myOrderDto.getProductDetails().getCostPerSquareFoot()
                                 + "\nLabor cost per square foot" + myOrderDto.getProductDetails().getLaborCostPerSquareFoot()
                                 + "\nMaterial cost: " + myOrderDto.getMaterialCost() + "\nLabor cost: " + myOrderDto.getLaborCost()
-                                + "\nTax: " + myOrderDto.getTax() + "\nTotal: " + myOrderDto.getTotal()
-                                + ", Order Date: " + orderDtoDate + "."
+                                + "\nTax: " + myOrderDto.getTax() + "\nTotal: " + myOrderDto.getTotal() + "."
                                 + "\n--------------------------------------------");
 
                         System.out.println("Do you wish to add this order to the system? y/n");
@@ -229,7 +232,11 @@ public class FlooringMasteryView {
                             System.out.println("Adding new order was cancelled. Redirecting you to the main menu...");
                             runMenu();
                         }
+                        //clear the collection before running the menu again
+                        List<OrderDto> collectionToClear = orderService.readOrdersFile(orderDtoDate,false);
+                        collectionToClear.clear();
                         break;
+
                     case 3:
                         System.out.println("Edit an order:");
                         // first, prompt the user for te order date and order number
@@ -260,6 +267,8 @@ public class FlooringMasteryView {
                                     + "\nMaterial cost: " + retrievedOrder.getMaterialCost() + "\nLabor cost: " + retrievedOrder.getLaborCost()
                                     + "\nTax: " + retrievedOrder.getTax() + "\nTotal: " + retrievedOrder.getTotal() + "."
                                     + "\n--------------------------------------------");
+
+
                             System.out.println("Do you wish to update this order? y/n");
                             char updateChoice = input.next().charAt(0);
                             if (updateChoice == 'y') {
@@ -294,16 +303,20 @@ public class FlooringMasteryView {
                                 //display current product
                                 System.out.println("The current product set for this order is " + retrievedOrder.getProductDetails().getProductType() + ".");
                                 //display the available choices to the user
-                                System.out.println("Please update the product type, choosing one of the following options: " + productKeys + "(case sensitive) \nAlternatively, press Enter to skip to the next details.");
+                                System.out.println("Please update the product type, choosing one of the following options: " + productKeys + " Please bear in mind that options are case sensitive. \nAlternatively, press Enter to skip to the next details.");
                                 String updatedProduct = input.nextLine();
                                 //if empty, keep current details
                                 if (updatedProduct.isEmpty()) {
                                     retrievedOrder.setProductDetails(retrievedOrder.getProductDetails());
-                                } else {
-                                    //set the new productDTO corresponding to the user choice (which is the key tp productDTo collection)
+                                }
+                                //if user input is a valid choice
+                                else {
+                                    retrievedOrder.getProductDetails().setProductType(updatedProduct);
+                                    //build the new ProductDTO corresponding to the user choice (which is the key tp productDTo collection)
+                                    //so retrieve the map values corresponding the key (user input) , and create a new ProductDto
                                     productDetails = new ProductDto(updatedProduct, productInfoMap.get(updatedProduct).getCostPerSquareFoot(), productInfoMap.get(updatedProduct).getLaborCostPerSquareFoot());
 
-                                    //set the new ProductDto as the new productDetaild object composing Order Dto
+                                    //set the new ProductDto as the new productDetails object composing Order Dto
                                     retrievedOrder.setProductDetails(retrievedOrder.getProductDetails());
                                 }
 
@@ -314,6 +327,12 @@ public class FlooringMasteryView {
                                 if (updatedAreaString.isEmpty()) {
                                     retrievedOrder.setArea(retrievedOrder.getArea());
                                 } else {
+                                    Integer updatedAreaInt = Integer.parseInt(updatedAreaString);
+                                    if (updatedAreaInt < 100) {
+                                        System.out.println("Sorry, area requirements have not been met (minimum 100).");
+                                        System.out.println("Redirecting you back to main menu....");
+                                        runMenu();
+                                    }
                                     BigDecimal updatedArea = new BigDecimal(updatedAreaString);
                                     retrievedOrder.setArea(updatedArea);
                                 }
@@ -348,26 +367,71 @@ public class FlooringMasteryView {
                                         + "\nTax: " + retrievedOrder.getTax() + "\nTotal: " + retrievedOrder.getTotal()
                                         + "\n--------------------------------------------");
 
+                                // prompt user to confirm the updated Order
                                 System.out.println("Do you wish to save this order version and add it to the system? y/n");
                                 char updateOrderChoice = input.next().charAt(0);
+                                //if yes, call the updateOrder() , passing the edited retrievedOrder as parameter
                                 if (updateOrderChoice == 'y') {
-                                    orderService.updateOrder(retrievedOrder);
+                                    OrderDto updatedORder = orderService.updateOrder(retrievedOrder);
                                     System.out.println("The order has been updated successfully and saved to file.");
+                                    System.out.println("Redirecting back to the main menu...");
+
+                                    //clear the collection before returning to main menu
+                                    collectionToClear = orderService.readOrdersFile(orderByDate,false);
+                                    collectionToClear.clear();
                                     break;
+
+                           /*       for soem reason it does not clear the collection
+                                    ordersCollection = orderService.getAlLOrdersByDate(updatedORder.getOrderDate());
+                                    ordersCollection.clear();
+                                    System.out.println("Redirecting back to the main menu...");
+                                    runMenu();*/
+                                   // System.out.println("The program will need to restart to perform other queries.");
+                                    //System.exit(0); //program exits otherwise collections will overwrite
                                 } else {
+                                    //if user does not confirm, display cancellation message and confirm whether they wish to continue or exit the program
                                     System.out.println("Update order operation cancelled. No details have been saved.");
                                     break;
                                 }
                             } else {
+                                //ordersCollection = orderService.getAlLOrdersByDate(retrievedOrder.getOrderDate());
+                                //ordersCollection.clear();
                                 break;
                             }
                         }
                         //   break;
                     case 4:
                         System.out.println("Remove an order:");
-                        break;
+                        // first, prompt the user for te order date and order number
+                        System.out.println("Please insert the date of the order: (YYYY-MM-DD)");
+                        input.nextLine();
+                        String d = input.nextLine();
+                        LocalDate removeOrderByDate = LocalDate.parse(d);
+                        System.out.println("Please insert the order number:");
+                        int removeOrderbyNumber = input.nextInt();
+                        OrderDto removeOrder = orderService.retrieveOrder(removeOrderByDate, removeOrderbyNumber);
+
+                        //first, check if the order exists
+                        if (removeOrder == null) {
+                            System.out.println("Sorry, there is no order with the provided details");
+                            break;
+                        }
+                        //if order is found:
+                        else {
+                            System.out.println("Order found. Here are the details associated with this order: " + removeOrder.toString());
+                            System.out.println("Confirm deleting this order? y/n");
+                            char deleteOption = input.next().charAt(0);
+                            if (deleteOption == 'y') {
+                                // orderService.getAlLOrdersByDate(removeOrderByDate).clear();
+                                orderService.removeOrder(removeOrderByDate, removeOrderbyNumber);
+                                System.out.println("Order deleted.");
+                            }
+                            collectionToClear = orderService.readOrdersFile(removeOrderByDate,false);
+                                    collectionToClear.clear();
+                            break;
+                        }
                     case 5:
-                        System.out.println("Export All Data:");
+                        System.out.println("All data is saved to file. This was done in real time as you were performing the CRUD operations.");
                         break;
                     case 6:
                         System.out.println("Quit");
@@ -380,7 +444,7 @@ public class FlooringMasteryView {
                             runMenu();
                         }
                     default:
-                        System.out.println("Invalid option. Please choose a value between 1- 6, according to the menu.");
+                        System.out.println("Invalid option. Please choose a value between 1 - 6, according to the menu.");
                         runMenu();
                 }
             } catch (InputMismatchException e) {
@@ -393,80 +457,5 @@ public class FlooringMasteryView {
             continueOption = input.next().charAt(0);
         }
         while (continueOption == 'y');
-
-
-        /*
-         // TAX SERVICE methods testing
-        TaxService taxService2=null;
-        System.out.println("your tax info is as following:");
-        try {
-            taxService2 = new TaxServiceImpl();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        System.out.println("your tax info for the orders is as following:");
-
-        Map<String, BigDecimal> showTaxInfo =taxService2.getAllTaxInfo();
-        if (showTaxInfo.isEmpty()){
-            System.out.println("There are no entries in the Taxes information file.");
-        } else {
-            // get the Set of keys from the map
-            Set<String> keys = showTaxInfo.keySet();
-
-            // print the keys to the screen
-            for (String k : keys) {
-                System.out.println ( k + " " + showTaxInfo.get(k));
-            }
-        }
-
-
-        //PRODUCT TESTING
-        ProductService productService;
-        System.out.println("Your products' info is as following:");
-
-        try {
-            productService= new ProductServiceImpl();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        System.out.println("Assuming data has been read from the file, info is as following:");
-
-        Map<String, ProductDto> showProductInfo =productService.getAllProductsInfo();
-
-        if (showProductInfo.isEmpty()){
-            System.out.println("There are no entries in the Products information file.");
-        } else {
-            // get the Set of keys from the map
-            Set<String> keys = showProductInfo.keySet();
-            // print the keys to the screen
-            for (String k : keys) {
-                System.out.println ("Key product "+ k + ": " + showProductInfo.get(k));
-            }
-        }
-
-
-        //ORDER TESTING #
-
-        OrderService orderService;
-        System.out.println("Your today's date orders are as following:");
-        try {
-            orderService= new OrderServiceImpl();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        //THIS WAS THE MISTAKE - Wrong Data format Input
-        // LocalDate orderDate= LocalDate.ofEpochDay(2023-06-14);
-
-        LocalDate orderDate=LocalDate.now();
-        List<OrderDto> printOrders = orderService.getAlLOrdersByDate(LocalDate.of(2023,06,14));
-        for(OrderDto order: printOrders){
-            System.out.println(order);
-        }
-        System.out.println(printOrders.size());
-*/
-
     }
 }

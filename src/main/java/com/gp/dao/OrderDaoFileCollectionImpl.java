@@ -110,7 +110,7 @@ public class OrderDaoFileCollectionImpl implements OrderDao {
     // in order to later differentiate between reading and adding orders
     // only when adding a new order should the file be created (no need to create a new file if only reading )
 
-    private List<OrderDto> readOrdersFile(LocalDate ordersDate, boolean shouldCreate) throws IOException {
+    public List<OrderDto> readOrdersFile(LocalDate ordersDate, boolean shouldCreate) throws IOException {
         String orderFileName = "Orders_" + String.valueOf(ordersDate) + ".txt"; //convert LocalDate to String value
 
         File myFile = new File(orderFileName);
@@ -148,10 +148,6 @@ public class OrderDaoFileCollectionImpl implements OrderDao {
             //productType
             String productType = st.nextToken();
 
-            //area -big decimal
-            String areaString = st.nextToken();
-            BigDecimal area = new BigDecimal(areaString);
-
             //costPerSquareFoot
             String costPerSquareFootString = st.nextToken();
             BigDecimal costPerSquareFoot = new BigDecimal(costPerSquareFootString);
@@ -159,6 +155,10 @@ public class OrderDaoFileCollectionImpl implements OrderDao {
             //laborCostPerSquareFoot
             String laborCostPerSquareFootString = st.nextToken();
             BigDecimal laborCostPerSquareFoot = new BigDecimal(laborCostPerSquareFootString);
+
+            //area -big decimal
+            String areaString = st.nextToken();
+            BigDecimal area = new BigDecimal(areaString);
 
             //materialCost
             String materialCostString = st.nextToken();
@@ -252,7 +252,6 @@ public class OrderDaoFileCollectionImpl implements OrderDao {
         for(int i=0; i< ordersOnSameDate.size(); i++){
             if(ordersOnSameDate.get(i).getOrderNumber() == updatedOrder.getOrderNumber()){
                 updatedOrder=ordersOnSameDate.get(i);
-//                ordersOnSameDate.set(i,updatedOrder);
             }
         }
         //save to file
@@ -262,8 +261,19 @@ public class OrderDaoFileCollectionImpl implements OrderDao {
 
 
     @Override
-    public void removeOrder(LocalDate orderDate, Integer orderNumber) {
+    public void removeOrder(LocalDate orderDate, Integer orderNumber) throws IOException {
 
+        //call readOrdersFile() , with orderDate and shouldCreate false
+     //  readOrdersFile(orderDate, false);
+
+        //traverse the collection of the same date orders and search for the order number
+        for(int i=0; i< ordersOnSameDate.size();i++){
+            if (ordersOnSameDate.get(i).getOrderNumber()==orderNumber){ //if order numbers match remove the object from collection
+                ordersOnSameDate.remove( ordersOnSameDate.get(i));
+            }
+        }
+        //write to file the new collection
+        writeToFile();
     }
 
     @Override
@@ -282,6 +292,7 @@ public class OrderDaoFileCollectionImpl implements OrderDao {
         }
         return true;
     }
+
 }
 
 /*
@@ -290,7 +301,15 @@ CustomerName – String
 State – String
 TaxRate – BigDecimal
 ProductType – String
+CostPerSquareFoot – BigDecimal
+LaborCostPerSquareFoot – BigDecimal
 Area – BigDecimal
+MaterialCost – BigDecimal
+LaborCost – BigDecimal
+Tax – BigDecimal
+Total – BigDecimal
+
+//Area – BigDecimal
 CostPerSquareFoot – BigDecimal
 LaborCostPerSquareFoot – BigDecimal
 MaterialCost – BigDecimal
@@ -300,4 +319,6 @@ Total – BigDecimal
 
 *
 1,Ada Lovelace,CA,25.00,Tile,249.00,3.50,4.15,871.50,1033.35,476.21,2381.06
+
+1,Mary Doe,TX,4.45,Carpet,2.25,2.10,200,450.00,420.00,38.715000,908.715000
 */

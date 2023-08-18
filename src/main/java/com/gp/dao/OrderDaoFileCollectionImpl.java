@@ -228,12 +228,25 @@ public class OrderDaoFileCollectionImpl implements OrderDao {
     }
 
     @Override
-    public OrderDto retrieveOrder(LocalDate orderDate, Integer orderNumber) {
-        return null;
+    public OrderDto retrieveOrder(LocalDate orderDate, int orderNumber) throws IOException {
+        //instantiate an order DTO, to hold the return value object
+        OrderDto returnedOrderDto=null;
+
+        //call readOrdersFile() , with orderDate and shouldCreate false
+        readOrdersFile(orderDate, false);
+
+        //trasverse the collection of the same date orders and search for the order number
+        for(int i=0; i< ordersOnSameDate.size();i++){
+            if (ordersOnSameDate.get(i).getOrderNumber()==orderNumber){ //if order numbers match
+                returnedOrderDto= ordersOnSameDate.get(i);
+            }
+        }
+        return returnedOrderDto;
     }
 
     @Override
     public OrderDto updateOrder(OrderDto updateOrder) {
+
         return null;
     }
 

@@ -11,7 +11,7 @@ public interface OrderDao {
 
     List<OrderDto> getAlLOrdersByDate(LocalDate orderDate) throws IOException;
     OrderDto addNewOrder(OrderDto newOrder) throws IOException;
-    OrderDto retrieveOrder(LocalDate orderDate, Integer orderNumber);
+    OrderDto retrieveOrder(LocalDate orderDate, int orderNumber) throws IOException;
     OrderDto updateOrder (OrderDto updateOrder);
     void removeOrder(LocalDate orderDate, Integer orderNumber);
     boolean writeToFile() throws IOException;

@@ -37,8 +37,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDto retrieveOrder(LocalDate orderDate, Integer orderNumber) {
-        return null;
+    public OrderDto retrieveOrder(LocalDate orderDate, int orderNumber) throws IOException {
+
+        return orderDao.retrieveOrder(orderDate,orderNumber);
     }
 
     @Override

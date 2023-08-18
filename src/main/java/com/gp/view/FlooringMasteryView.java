@@ -96,7 +96,6 @@ public class FlooringMasteryView {
                         ProductDto productDetails = null;
                         OrderDto myOrderDto = null;
 
-
                         System.out.println("Let's enter the new order details!");
 
                         System.out.println("First, enter the order's date: (YYYY-MM-DD)");
@@ -187,15 +186,14 @@ public class FlooringMasteryView {
                         //total
                         BigDecimal total = materialCost.add(laborCost).add(tax);
 
-                        //set OrderNumber initially to a dummy value,
-                        //however this will be checked upon calling the addOrder(), which check if there are other orders on the same date
+                        //set OoderNumber initially to a dummy value, however this will be checked upon calling the addOrder(),
                         //if this is the first order, it will assign value 1 , else it will increment the orderNumber comparing the last entered order id
                         int orderNumber = 0;
 
                         // form the order DTO
                         myOrderDto = new OrderDto(orderNumber, customerName, taxDetails, productDetails, area, materialCost, laborCost, tax, total);
 
-                        //set the order date
+                        //set the order date for the orderDTO
                         myOrderDto.setOrderDate(orderDtoDate);
 
                         System.out.println("Here are the new order details: ");
@@ -208,27 +206,64 @@ public class FlooringMasteryView {
                                 + "\nLabor cost per square foot" + myOrderDto.getProductDetails().getLaborCostPerSquareFoot()
                                 + "\nMaterial cost: " + myOrderDto.getMaterialCost() + "\nLabor cost: " + myOrderDto.getLaborCost()
                                 + "\nTax: " + myOrderDto.getTax() + "\nTotal: " + myOrderDto.getTotal()
-                                + ", for " + orderDtoDate + ".");
+                                + ", Order Date: " + orderDtoDate + ".");
 
                         System.out.println("Do you wish to add this order to the system? y/n");
                         char choice = input.next().charAt(0);
                         if (choice == 'y') {
-                            try {
+                            try { // IOException handling
                                 orderService.addNewOrder(myOrderDto);
                                 System.out.println("Order added to the system.");
-                            }// IOException handling
+                            }
                             catch (IOException e) {
                                 e.printStackTrace();
                                 System.out.println("Something went wrong when trying to save the order to file. Please try again.");
                             }
-                            ;
-                        } else {
+                        }
+                        else {
                             System.out.println("Adding new order was cancelled. Redirecting you to the main menu...");
                             runMenu();
                         }
                         break;
                     case 3:
                         System.out.println("Edit an order:");
+    // first, prompt the user for te order date and order number
+                        System.out.println("Please insert the date of the order: (YYYY-MM-DD)");
+                        input.nextLine();
+                        String date = input.nextLine();
+                        LocalDate orderByDate = LocalDate.parse(date); //parse
+                        System.out.println("Please insert the order number:");
+                        int orderbyNumber = input.nextInt();
+
+                        //call retrieveOrder() and store its return value in order DTO (retrievedOrder)
+                        OrderDto retrievedOrder = orderService.retrieveOrder(orderByDate,orderbyNumber);
+
+                        //check if the value is null
+                        if(retrievedOrder==null){
+                            System.out.println("Could not locate an order with these details.");
+                            break;
+                        }
+                        //if the order is found display to user
+                        else{
+                            System.out.println("Order found!");
+                            System.out.println("Customer name: " + retrievedOrder.getCustomerName()
+                                    + "\nState: " + retrievedOrder.getTaxDetails().getStateAbbreviation()
+                                    + "\nTax rate: " + retrievedOrder.getTaxDetails().getTaxRate()
+                                    + "\nProduct type: " + retrievedOrder.getProductDetails().getProductType() + "\nArea: " + retrievedOrder.getArea()
+                                    + "\nCost per square foot: " + retrievedOrder.getProductDetails().getCostPerSquareFoot()
+                                    + "\nLabor cost per square foot" + retrievedOrder.getProductDetails().getLaborCostPerSquareFoot()
+                                    + "\nMaterial cost: " + retrievedOrder.getMaterialCost() + "\nLabor cost: " + retrievedOrder.getLaborCost()
+                                    + "\nTax: " + retrievedOrder.getTax() + "\nTotal: " + retrievedOrder.getTotal() + ".");
+                            System.out.println("Do you wish to update this order? y/n");
+                            char updateChoice = input.next().charAt(0);
+                            if(updateChoice=='y'){
+                                System.out.println("Please update the customer name: ");
+
+                            }
+                            else {
+                                break;
+                            }
+                        }
                         break;
                     case 4:
                         System.out.println("Remove an order:");
@@ -253,6 +288,8 @@ public class FlooringMasteryView {
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Program needs to be restarted!");
                 System.exit(1);
+            } catch (IOException e) {
+                System.out.println("Sorry, something went wrong when trying to find the order. Please try again.");
             }
             System.out.println("Do you want to continue? y/n");
             continueOption = input.next().charAt(0);

@@ -290,4 +290,90 @@ public class OrderDaoFileCollectionImpl implements OrderDao {
         return true;
     }
 
+
+    //FOR UNIT TESTING PURPOSES
+
+    public List<OrderDto> readOrdersFile(String testFileName) throws IOException {
+        // File myFile = new File(testFileName);
+        //2. FileReader Object
+        FileReader fr = new FileReader(testFileName);
+        //3. create a BufferReader object
+        BufferedReader br = new BufferedReader(fr);
+
+        //4. read line by line
+        String line = null;
+        while ((line = br.readLine()) != null) {
+            //tokenize values, using  < , > as delimiter
+            StringTokenizer st = new StringTokenizer(line, ",");
+
+            //orderNumber
+            String orderNumberString = st.nextToken();
+            Integer orderNumber = Integer.parseInt(orderNumberString);
+
+            //customerName
+            String customerName = st.nextToken();
+
+            //state
+            String state = st.nextToken();
+
+            //tax rate
+            String taxRateString = st.nextToken();
+            //convert String to BigDecimal using BigDecimal constructor
+            BigDecimal taxRate = new BigDecimal(taxRateString);
+
+            //productType
+            String productType = st.nextToken();
+
+            //costPerSquareFoot
+            String costPerSquareFootString = st.nextToken();
+            BigDecimal costPerSquareFoot = new BigDecimal(costPerSquareFootString);
+
+            //laborCostPerSquareFoot
+            String laborCostPerSquareFootString = st.nextToken();
+            BigDecimal laborCostPerSquareFoot = new BigDecimal(laborCostPerSquareFootString);
+
+            //area -big decimal
+            String areaString = st.nextToken();
+            BigDecimal area = new BigDecimal(areaString);
+
+            //materialCost
+            String materialCostString = st.nextToken();
+            BigDecimal materialCost = new BigDecimal(materialCostString);
+
+            //laborCost
+            String laborCostString = st.nextToken();
+            BigDecimal laborCost = new BigDecimal(laborCostString);
+
+            //tax
+            String taxString = st.nextToken();
+            BigDecimal tax = new BigDecimal(taxString);
+
+            //total
+            String totalString = st.nextToken();
+            BigDecimal total = new BigDecimal(totalString);
+
+            //create new OrderDto object using the read values
+            OrderDto myOrderDto = new OrderDto(orderNumber, customerName, new TaxDto(state, taxRate),
+                    new ProductDto(productType, costPerSquareFoot, laborCostPerSquareFoot), area, materialCost, laborCost, tax, total);
+
+            //set the date of the order with the date of the file
+            //  myOrderDto.setOrderDate(ordersDate);
+
+            //add Order DTO to collection
+            ordersOnSameDate.add(myOrderDto);
+        }
+        return ordersOnSameDate;
+    }
+
+    //FOR UNIT TESTING PURPOSES
+    public void removeOrder(String testFileName, int orderNumber) throws IOException {
+
+        //traverse the collection of the same date orders and search for the order number
+        for (int i = 0; i < ordersOnSameDate.size(); i++) {
+            if (ordersOnSameDate.get(i).getOrderNumber() == orderNumber) { //if order numbers match remove the object from collection
+                ordersOnSameDate.remove(ordersOnSameDate.get(i));
+            }
+        }
+    }
+
 }

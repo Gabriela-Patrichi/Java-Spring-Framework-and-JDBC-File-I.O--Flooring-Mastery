@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,9 +23,9 @@ public class ProductDaoFileCollectionImplTest {
 
         //Expected Output
         Map<String,ProductDto> expectedProductData = new HashMap<>(actualProductsData);
+        expectedProductData.put("Carpet", new ProductDto("Carpet", BigDecimal.valueOf(2.25), BigDecimal.valueOf(2.10)));
 
         //Assertions
         Assertions.assertEquals(actualProductsData.size(), expectedProductData.size());
     }
-
 }

@@ -59,4 +59,10 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
+    //FOR SERVICE LAYER UNIT TESTING PURPOSES
+    public OrderServiceImpl( OrderDao orderDao) {
+        this.orderDao=orderDao;
+    }
+
+
 }

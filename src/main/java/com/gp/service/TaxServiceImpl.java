@@ -20,7 +20,12 @@ public class TaxServiceImpl implements TaxService{
 
     @Override
     public Map<String, BigDecimal> getAllTaxInfo() {
+
         return taxDao.getAllTaxInfo();
     }
 
+    //FOR UNIT TESTING PURPOSES
+    public  TaxServiceImpl(TaxDao taxDao){
+        this.taxDao=taxDao;
+    }
 }

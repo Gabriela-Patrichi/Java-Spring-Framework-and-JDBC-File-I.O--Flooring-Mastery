@@ -18,6 +18,14 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Map<String, ProductDto> getAllProductsInfo() {
+
         return productDao.getAllProductsInfo();
     }
+
+
+    //FOR UNIT TESTING PURPOSES
+    public  ProductServiceImpl(ProductDao productDao){
+        this.productDao = productDao;
+    }
+
 }

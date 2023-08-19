@@ -8,6 +8,6 @@ import java.util.Map;
 public interface ProductDao {
 
 
-   //method to get all products info (for adding an order for ex)
+   //method to get all products info (for adding an order or editing(updating) an order)
     Map<String, ProductDto> getAllProductsInfo();
 }

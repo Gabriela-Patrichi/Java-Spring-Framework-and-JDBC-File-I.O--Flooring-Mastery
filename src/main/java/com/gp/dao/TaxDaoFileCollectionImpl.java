@@ -33,8 +33,6 @@ public class TaxDaoFileCollectionImpl implements TaxDao {
 
         while ((line = br.readLine()) != null) {
 
-            //System.out.println(line); - only for testing
-
             //tokenize values, using  < , > as delimiter
             StringTokenizer st = new StringTokenizer(line, ",");
 
@@ -48,8 +46,6 @@ public class TaxDaoFileCollectionImpl implements TaxDao {
             String taxRateString = st.nextToken();
             //convert String to BigDecimal using BigDecimal constructor
             BigDecimal taxRate = new BigDecimal(taxRateString);
-
-            // BigDecimal taxRate =BigDecimal.valueOf(Double.valueOf(taxRateString));
 
             //create new TaxDto object using the read values
             TaxDto myTaxDto = new TaxDto(taxState, taxRate);
@@ -75,10 +71,7 @@ public class TaxDaoFileCollectionImpl implements TaxDao {
 
         String line = null; //store each line of the BufferReader in String
         //4. read line by line
-
         while ((line = br.readLine()) != null) {
-
-            System.out.println(line);
 
             //tokenize values, using  < , > as delimiter
             StringTokenizer st = new StringTokenizer(line, ",");
@@ -112,10 +105,3 @@ public class TaxDaoFileCollectionImpl implements TaxDao {
     }
 
 }
-/*
-State,StateName,TaxRate
-TX,Texas,4.45
-WA,Washington,9.25
-KY,Kentucky,6.00
-CA,Calfornia,25.00
-* */

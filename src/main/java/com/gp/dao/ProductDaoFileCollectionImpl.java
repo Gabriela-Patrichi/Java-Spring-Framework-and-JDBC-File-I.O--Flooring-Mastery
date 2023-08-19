@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-public class ProductDaoFileCollectionImpl implements ProductDao{
+public class ProductDaoFileCollectionImpl implements ProductDao {
 
     //constructor which will read from file , create ProductDto and store it in a Map<String,ProductDto>
     //Map <String, ProductDto> --- productType(in ProductDto) - (k), object itself (v)
@@ -30,11 +30,9 @@ public class ProductDaoFileCollectionImpl implements ProductDao{
         //3. create a BufferReader object
         BufferedReader br = new BufferedReader(fr);
 
-        String line =null; //store each line of the BufferReader in String
+        String line = null; //store each line of the BufferReader in String
         //4. read line by line
         while ((line = br.readLine()) != null) {
-
-          //  System.out.println(line);
 
             //tokenize values, using  < , > as delimiter
             StringTokenizer st = new StringTokenizer(line, ",");
@@ -60,9 +58,14 @@ public class ProductDaoFileCollectionImpl implements ProductDao{
     }
 
 
+    @Override
+    public Map<String, ProductDto> getAllProductsInfo() {
+        Map<String, ProductDto> returnedProductData = new HashMap<>(productFileData);
+        return returnedProductData;
+    }
+
 
     //FOR UNIT TESTING PURPOSES
-
     public ProductDaoFileCollectionImpl(String testFileName) throws IOException {
 
         //1. create a File Object
@@ -75,11 +78,9 @@ public class ProductDaoFileCollectionImpl implements ProductDao{
         //3. create a BufferReader object
         BufferedReader br = new BufferedReader(fr);
 
-        String line =null; //store each line of the BufferReader in String
+        String line = null; //store each line of the BufferReader in String
         //4. read line by line
         while ((line = br.readLine()) != null) {
-
-            //  System.out.println(line);
 
             //tokenize values, using  < , > as delimiter
             StringTokenizer st = new StringTokenizer(line, ",");
@@ -102,20 +103,5 @@ public class ProductDaoFileCollectionImpl implements ProductDao{
             //add tax object to collection
             productFileData.put(productType, myProductDto);
         }
-
-    }
-
-    @Override
-    public Map<String, ProductDto> getAllProductsInfo() {
-        Map<String,ProductDto> returnedProductData = new HashMap<>(productFileData);
-        return returnedProductData;
     }
 }
-
-/*
-ProductType,CostPerSquareFoot,LaborCostPerSquareFoot
-Carpet,2.25,2.10
-Laminate,1.75,2.10
-Tile,3.50,4.15
-Wood,5.15,4.75
- */

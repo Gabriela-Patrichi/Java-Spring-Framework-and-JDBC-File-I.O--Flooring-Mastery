@@ -3,9 +3,7 @@ package com.gp.model;
 import java.math.BigDecimal;
 
 public class ProductDto {
-
-   // private int productId; - no longer used, will take productType as key instead (only 1 product in each order, user will select a product by choosing the product name - in yhe requirements)
-    private String productType; //this will be the key  <String, ProductDto>
+    private String productType; //this will be the key <String, ProductDto>, user will select a product by choosing the product name - in the requirements
     private BigDecimal costPerSquareFoot;
     private BigDecimal laborCostPerSquareFoot;
 
@@ -42,8 +40,8 @@ public class ProductDto {
     @Override
     public String toString() {
         return
-                 productType + ","+
-                costPerSquareFoot + ","+
-                laborCostPerSquareFoot;
+                productType + "," +
+                        costPerSquareFoot + "," +
+                        laborCostPerSquareFoot;
     }
 }

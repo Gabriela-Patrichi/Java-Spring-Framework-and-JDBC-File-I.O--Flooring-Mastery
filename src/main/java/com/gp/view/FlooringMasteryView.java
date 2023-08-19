@@ -41,7 +41,7 @@ public class FlooringMasteryView {
             System.out.println("There was an error in reading the file. Please try again.");
         }
 
-
+        //Maps of tax and product info has been declared here to be able to access them in 2 distinct functionalities(addOrder, updateOder)
         //call getAllTaxInfo() from TaxService , which will return a map
         Map<String, BigDecimal> taxInfoCollection = taxService.getAllTaxInfo();
         // get the Set of keys from the map
@@ -55,6 +55,7 @@ public class FlooringMasteryView {
         char continueOption = 'n';
         do {
             System.out.println(" * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *");
+            System.out.println("*");
             System.out.println("* <<Flooring Program>>");
             System.out.println("* 1. Display Orders");
             System.out.println("* 2. Add an Order");
@@ -69,7 +70,6 @@ public class FlooringMasteryView {
             try {
                 int userOption = input.nextInt();
 
-
                 switch (userOption) {
                     case 1:
                         System.out.println("Enter the date for which you wish to display the orders: (YYYY-MM-DD)");
@@ -83,7 +83,6 @@ public class FlooringMasteryView {
                                 break;
                             } else {
                                 System.out.println("Order(s) retrieved:");
-                                // System.out.println("OrderNumber,CustomerName,State,TaxRate,ProductType,Area,CostPerSquareFoot,LaborCostPerSquareFoot,MaterialCost,LaborCost,Tax,Total");
                                 //print out order's values one by one, on separate lines, commenting what they represent, to enrich the user experience
                                 for (OrderDto order : printOrders) {
                                     System.out.println("\nOrder number: " + order.getOrderNumber() + "\nCustomer name: " + order.getCustomerName()
@@ -96,12 +95,13 @@ public class FlooringMasteryView {
                                             + "\nTax: " + order.getTax() + "\nTotal: " + order.getTotal()
                                             + "\n--------------------------------------------");
                                 }
-                                List<OrderDto> collectionToClear = orderService.readOrdersFile(ordersDate,false);
+                                //make sure collection of OrderDto is empty
+                                List<OrderDto> collectionToClear = orderService.readOrdersFile(ordersDate, false);
                                 //clear the collection before returning to main menu
                                 collectionToClear.clear();
                                 break;
                             }
-                        } catch (IOException e) {
+                        } catch (IOException e) { //if file does not exist
                             System.out.println("Sorry, there are no existing orders for that date.");
                             break;
                         }
@@ -122,15 +122,19 @@ public class FlooringMasteryView {
                         System.out.println("Enter customer name:");
                         String customerName = input.nextLine();
                         if (customerName.isEmpty()) { //validation
-                            System.out.println("Sorry, customer name cannot be empty. Redirecting you to main menu...");
+                            System.out.println("Customer name field cannot be empty. Redirecting you to main menu...\n");
                             runMenu();
                         }
 
                         //TAXES
-
                         //display choices to the user and prompt to choose one of the options
                         System.out.println("Enter Tax State: Option are limited to : " + keys);
                         String state = input.nextLine();
+
+                        if (state.isEmpty()) { //validation
+                            System.out.println("This field cannot be empty. Please try again.\nRedirecting you to main menu...\n");
+                            runMenu();
+                        }
 
                         //check if the user input matches a map key
                         for (String k : keys) {
@@ -145,7 +149,6 @@ public class FlooringMasteryView {
                             System.out.println("Sorry, this state is not on the list! Redirecting you back to main menu...");
                             runMenu();
                         }
-                        //  System.out.println("These are the tax details: " + taxDetails); //just for testing
 
                         //PRODUCT
                         System.out.println("Next, here is the list of available products and pricing information to choose from.");
@@ -156,6 +159,12 @@ public class FlooringMasteryView {
                         }
                         System.out.println("Please type in the product name you wish to add to your order (case sensitive):");
                         String productChoice = input.nextLine();
+
+                        //product field cannot be left empty
+                        if (productChoice.isEmpty()) { //validation
+                            System.out.println("Product choice field cannot be left empty. Redirecting you to main menu...\n");
+                            runMenu();
+                        }
                         for (String k : productKeys) {
                             if (k.equals(productChoice)) { //if yes, get the key ad value and store them in a TaxDto
                                 System.out.println("Ok. Product details have been set to:" + productInfoMap.get(k).getProductType() +
@@ -174,6 +183,7 @@ public class FlooringMasteryView {
                         //Area
                         System.out.println("Next, please input the area (minimum 100).");
                         int areaInt = input.nextInt();
+                        //check for minimum 100 condition
                         if (areaInt < 100) {
                             System.out.println("Sorry, area requirements have not been met(minimum 100).");
                             System.out.println("Redirecting you back to main menu....");
@@ -233,11 +243,11 @@ public class FlooringMasteryView {
                             runMenu();
                         }
                         //clear the collection before running the menu again
-                        List<OrderDto> collectionToClear = orderService.readOrdersFile(orderDtoDate,false);
+                        List<OrderDto> collectionToClear = orderService.readOrdersFile(orderDtoDate, false);
                         collectionToClear.clear();
                         break;
 
-                    case 3:
+                    case 3: //first retrieve the order, and then update the order
                         System.out.println("Edit an order:");
                         // first, prompt the user for te order date and order number
                         System.out.println("Please insert the date of the order: (YYYY-MM-DD)");
@@ -255,7 +265,7 @@ public class FlooringMasteryView {
                             System.out.println("Could not locate an order with these details.");
                             break;
                         }
-                        //if the order is found display to user
+                        //if the order is found display details to user
                         else {
                             System.out.println("Order found!");
                             System.out.println("Customer name: " + retrievedOrder.getCustomerName()
@@ -263,12 +273,12 @@ public class FlooringMasteryView {
                                     + "\nTax rate: " + retrievedOrder.getTaxDetails().getTaxRate()
                                     + "\nProduct type: " + retrievedOrder.getProductDetails().getProductType() + "\nArea: " + retrievedOrder.getArea()
                                     + "\nCost per square foot: " + retrievedOrder.getProductDetails().getCostPerSquareFoot()
-                                    + "\nLabor cost per square foot" + retrievedOrder.getProductDetails().getLaborCostPerSquareFoot()
+                                    + "\nLabor cost per square foot: " + retrievedOrder.getProductDetails().getLaborCostPerSquareFoot()
                                     + "\nMaterial cost: " + retrievedOrder.getMaterialCost() + "\nLabor cost: " + retrievedOrder.getLaborCost()
                                     + "\nTax: " + retrievedOrder.getTax() + "\nTotal: " + retrievedOrder.getTotal() + "."
                                     + "\n--------------------------------------------");
 
-
+                            //Second step, update the order details
                             System.out.println("Do you wish to update this order? y/n");
                             char updateChoice = input.next().charAt(0);
                             if (updateChoice == 'y') {
@@ -282,7 +292,7 @@ public class FlooringMasteryView {
                                     retrievedOrder.setCustomerName(updateName);
                                 }
 
-                                //update state option
+                                //UPDATE STATE DTO
                                 //display current state
                                 System.out.println("The state set for this order is " + retrievedOrder.getTaxDetails().getStateAbbreviation() + ".");
                                 //display available choices to the user
@@ -299,7 +309,7 @@ public class FlooringMasteryView {
                                     retrievedOrder.setTaxDetails(retrievedOrder.getTaxDetails());
                                 }
 
-                                //Product type
+                                //UPDATE PRODUCT DTO
                                 //display current product
                                 System.out.println("The current product set for this order is " + retrievedOrder.getProductDetails().getProductType() + ".");
                                 //display the available choices to the user
@@ -368,41 +378,36 @@ public class FlooringMasteryView {
                                         + "\n--------------------------------------------");
 
                                 // prompt user to confirm the updated Order
-                                System.out.println("Do you wish to save this order version and add it to the system? y/n");
+                                System.out.println("Do you wish to update the order to contain these details? y/n");
                                 char updateOrderChoice = input.next().charAt(0);
+
                                 //if yes, call the updateOrder() , passing the edited retrievedOrder as parameter
                                 if (updateOrderChoice == 'y') {
                                     OrderDto updatedORder = orderService.updateOrder(retrievedOrder);
-                                    System.out.println("The order has been updated successfully and saved to file.");
-                                    System.out.println("Redirecting back to the main menu...");
+                                    System.out.println("The order has been updated successfully and saved to file.\nRedirecting back to the main menu...");
 
                                     //clear the collection before returning to main menu
-                                    collectionToClear = orderService.readOrdersFile(orderByDate,false);
+                                    collectionToClear = orderService.readOrdersFile(orderByDate, false);
+                                    collectionToClear.clear();
+                                    runMenu();
+                                } else { //if user does not confirm, display cancellation message and confirm whether they wish to continue or exit the program
+                                    System.out.println("Update order operation cancelled. No details have been saved.");
+                                    //clear collection
+                                    collectionToClear = orderService.readOrdersFile(orderByDate, false);
                                     collectionToClear.clear();
                                     break;
-
-                           /*       for soem reason it does not clear the collection
-                                    ordersCollection = orderService.getAlLOrdersByDate(updatedORder.getOrderDate());
-                                    ordersCollection.clear();
-                                    System.out.println("Redirecting back to the main menu...");
-                                    runMenu();*/
-                                   // System.out.println("The program will need to restart to perform other queries.");
-                                    //System.exit(0); //program exits otherwise collections will overwrite
-                                } else {
-                                    //if user does not confirm, display cancellation message and confirm whether they wish to continue or exit the program
-                                    System.out.println("Update order operation cancelled. No details have been saved.");
-                                    break;
                                 }
-                            } else {
-                                //ordersCollection = orderService.getAlLOrdersByDate(retrievedOrder.getOrderDate());
-                                //ordersCollection.clear();
+                            }
+                            // if they choose not to update the displayed order, simply clear the collection break;
+                            else {
+                                collectionToClear = orderService.readOrdersFile(orderByDate, false);
+                                collectionToClear.clear();
                                 break;
                             }
                         }
-                        //   break;
-                    case 4:
+                    case 4: //similarly 2 steps: 1. retrieve order; 2. remove order(upon confirmation)
                         System.out.println("Remove an order:");
-                        // first, prompt the user for te order date and order number
+                        // first, prompt the user for the order date and order number
                         System.out.println("Please insert the date of the order: (YYYY-MM-DD)");
                         input.nextLine();
                         String d = input.nextLine();
@@ -416,26 +421,28 @@ public class FlooringMasteryView {
                             System.out.println("Sorry, there is no order with the provided details");
                             break;
                         }
-                        //if order is found:
+                        //if order is found, display the details to the user
                         else {
                             System.out.println("Order found. Here are the details associated with this order: " + removeOrder.toString());
                             System.out.println("Confirm deleting this order? y/n");
                             char deleteOption = input.next().charAt(0);
                             if (deleteOption == 'y') {
-                                // orderService.getAlLOrdersByDate(removeOrderByDate).clear();
                                 orderService.removeOrder(removeOrderByDate, removeOrderbyNumber);
                                 System.out.println("Order deleted.");
                             }
-                            collectionToClear = orderService.readOrdersFile(removeOrderByDate,false);
-                                    collectionToClear.clear();
+                            //if the user does not confirm
+                            System.out.println("Order has not been deleted.");
+                            //clear collection (in case te user chooses to continue)
+                            collectionToClear = orderService.readOrdersFile(removeOrderByDate, false);
+                            collectionToClear.clear();
                             break;
                         }
                     case 5:
-                        System.out.println("All data is saved to file. This was done in real time as you were performing the CRUD operations.");
+                        System.out.println("All data is saved to file. This was done in real-time as you were performing the CRUD operations.\n");
                         break;
                     case 6:
                         System.out.println("Quit");
-                        System.out.println("Are you sure you wish to quit now? Press y to confirm.");
+                        System.out.println("Are you sure you wish to quit? Press y to confirm.");
                         char quitOption = input.next().charAt(0);
                         if (quitOption == 'y') {
                             System.exit(0);
@@ -453,7 +460,7 @@ public class FlooringMasteryView {
             } catch (IOException e) {
                 System.out.println("Sorry, something went wrong when trying to find the order. Please try again.");
             }
-            System.out.println("Do you want to continue? y/n");
+            System.out.println("Do you want to continue? (It will redirect you to the main menu) y/n");
             continueOption = input.next().charAt(0);
         }
         while (continueOption == 'y');

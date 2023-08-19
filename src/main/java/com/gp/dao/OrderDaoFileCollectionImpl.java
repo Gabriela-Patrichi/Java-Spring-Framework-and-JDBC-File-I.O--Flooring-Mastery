@@ -11,13 +11,10 @@ import java.util.*;
 
 public class OrderDaoFileCollectionImpl implements OrderDao {
 
-    //will store the orders in a map , with the date as key value
-    Map<LocalDate, OrderDto> orderFileData = new HashMap<>();
-
-    //store orders from same date in an array list
+    //store orders from the same date in an array list
     List<OrderDto> ordersOnSameDate = new ArrayList<OrderDto>();
 
-    //constructor (which will read from file) - REFACTORED - readOrdersFile()
+    // OrderDaoFileCollectionImpl()constructor (which will read from file) - REFACTORED - readOrdersFile()-returning a OrderDto collection
 
     /* public OrderDaoFileCollectionImpl() throws IOException {
 
@@ -106,9 +103,9 @@ public class OrderDaoFileCollectionImpl implements OrderDao {
     }
     */
 
-    //readOrders from file taking in order's date and boolean shouldCreate value,
+    // readOrders from file taking in order's date and boolean shouldCreate value,
     // in order to later differentiate between reading and adding orders
-    // only when adding a new order should the file be created (no need to create a new file if only reading )
+    // only when adding a new order should the file be created (there is no need to create a new file if only reading)
 
     public List<OrderDto> readOrdersFile(LocalDate ordersDate, boolean shouldCreate) throws IOException {
         String orderFileName = "Orders_" + String.valueOf(ordersDate) + ".txt"; //convert LocalDate to String value
@@ -230,15 +227,15 @@ public class OrderDaoFileCollectionImpl implements OrderDao {
     @Override
     public OrderDto retrieveOrder(LocalDate orderDate, int orderNumber) throws IOException {
         //instantiate an order DTO, to hold the return value object
-        OrderDto returnedOrderDto=null;
+        OrderDto returnedOrderDto = null;
 
         //call readOrdersFile() , with orderDate and shouldCreate false
         readOrdersFile(orderDate, false);
 
         //traverse the collection of the same date orders and search for the order number
-        for(int i=0; i< ordersOnSameDate.size();i++){
-            if (ordersOnSameDate.get(i).getOrderNumber()==orderNumber){ //if order numbers match
-                returnedOrderDto= ordersOnSameDate.get(i);
+        for (int i = 0; i < ordersOnSameDate.size(); i++) {
+            if (ordersOnSameDate.get(i).getOrderNumber() == orderNumber) { //if order numbers match
+                returnedOrderDto = ordersOnSameDate.get(i);
             }
         }
         return returnedOrderDto;
@@ -249,9 +246,9 @@ public class OrderDaoFileCollectionImpl implements OrderDao {
 
         //traverse the collection to search for the required OrderDto (identifiable by the unique order number)
         //when found, replace the object with the updated one
-        for(int i=0; i< ordersOnSameDate.size(); i++){
-            if(ordersOnSameDate.get(i).getOrderNumber() == updatedOrder.getOrderNumber()){
-                updatedOrder=ordersOnSameDate.get(i);
+        for (int i = 0; i < ordersOnSameDate.size(); i++) {
+            if (ordersOnSameDate.get(i).getOrderNumber() == updatedOrder.getOrderNumber()) {
+                updatedOrder = ordersOnSameDate.get(i);
             }
         }
         //save to file
@@ -264,12 +261,12 @@ public class OrderDaoFileCollectionImpl implements OrderDao {
     public void removeOrder(LocalDate orderDate, Integer orderNumber) throws IOException {
 
         //call readOrdersFile() , with orderDate and shouldCreate false
-     //  readOrdersFile(orderDate, false);
+        //  readOrdersFile(orderDate, false);
 
         //traverse the collection of the same date orders and search for the order number
-        for(int i=0; i< ordersOnSameDate.size();i++){
-            if (ordersOnSameDate.get(i).getOrderNumber()==orderNumber){ //if order numbers match remove the object from collection
-                ordersOnSameDate.remove( ordersOnSameDate.get(i));
+        for (int i = 0; i < ordersOnSameDate.size(); i++) {
+            if (ordersOnSameDate.get(i).getOrderNumber() == orderNumber) { //if order numbers match remove the object from collection
+                ordersOnSameDate.remove(ordersOnSameDate.get(i));
             }
         }
         //write to file the new collection
@@ -294,31 +291,3 @@ public class OrderDaoFileCollectionImpl implements OrderDao {
     }
 
 }
-
-/*
-OrderNumber – Integer
-CustomerName – String
-State – String
-TaxRate – BigDecimal
-ProductType – String
-CostPerSquareFoot – BigDecimal
-LaborCostPerSquareFoot – BigDecimal
-Area – BigDecimal
-MaterialCost – BigDecimal
-LaborCost – BigDecimal
-Tax – BigDecimal
-Total – BigDecimal
-
-//Area – BigDecimal
-CostPerSquareFoot – BigDecimal
-LaborCostPerSquareFoot – BigDecimal
-MaterialCost – BigDecimal
-LaborCost – BigDecimal
-Tax – BigDecimal
-Total – BigDecimal
-
-*
-1,Ada Lovelace,CA,25.00,Tile,249.00,3.50,4.15,871.50,1033.35,476.21,2381.06
-
-1,Mary Doe,TX,4.45,Carpet,2.25,2.10,200,450.00,420.00,38.715000,908.715000
-*/

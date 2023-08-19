@@ -13,22 +13,16 @@ import java.util.Map;
 
 public class OrderServiceImpl implements OrderService {
 
-    //these will be required when adding a new order , or when editing a new order
-    //service to service communication
-    // TaxService taxService = new TaxServiceImpl();
-    //ProductService productService = new ProducServiceImpl();
-
     OrderDao orderDao;
 
     public OrderServiceImpl() throws IOException {
-        // LocalDate orderFileName;
         orderDao = new OrderDaoFileCollectionImpl();
     }
 
 
     @Override
     public List<OrderDto> readOrdersFile(LocalDate ordersDate, boolean shouldCreate) throws IOException {
-        return orderDao.readOrdersFile(ordersDate,shouldCreate);
+        return orderDao.readOrdersFile(ordersDate, shouldCreate);
     }
 
     @Override
@@ -45,7 +39,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto retrieveOrder(LocalDate orderDate, int orderNumber) throws IOException {
 
-        return orderDao.retrieveOrder(orderDate,orderNumber);
+        return orderDao.retrieveOrder(orderDate, orderNumber);
     }
 
     @Override
@@ -56,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void removeOrder(LocalDate orderDate, Integer orderNumber) throws IOException {
-        orderDao.removeOrder(orderDate,orderNumber);
+        orderDao.removeOrder(orderDate, orderNumber);
     }
 
     @Override

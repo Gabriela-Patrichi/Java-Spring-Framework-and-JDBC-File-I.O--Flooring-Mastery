@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 public class TaxDto {
 
- //   private int taxId; - no longer needed , will take stateAbbreviation as key instead (only 1 state on each order)
+    //   private int taxId; - no longer needed , will take stateAbbreviation as key instead (only 1 state on each order)
     private String stateAbbreviation; // Primary key
     private String stateName;
     private BigDecimal taxRate;

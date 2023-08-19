@@ -10,13 +10,12 @@ public class OrderDto {
     private int orderNumber;
     private String customerName;
     private TaxDto taxDetails; // DTO
-    private ProductDto productDetails;
+    private ProductDto productDetails; // DTO
     private BigDecimal area;
-    private BigDecimal materialCost; // = area * costPerSquareFoot (ProductDto.getCostPerSquareFoot())
-    private BigDecimal laborCost; //area * laborCostPerSquareFoot (ProductDto.getLaborCostPerSquareFoot())
-    private BigDecimal tax; // materialCost + laborCost) * (taxRate/100) (TaxDto.getTaxRate())
-    private BigDecimal total; // materialCost + laborCost + tax)
-
+    private BigDecimal materialCost;
+    private BigDecimal laborCost;
+    private BigDecimal tax;
+    private BigDecimal total;
     private LocalDate orderDate;
 
     //public Constructor
@@ -34,7 +33,6 @@ public class OrderDto {
     }
 
     // getters and setters to access the private variables
-
     public int getOrderNumber() {
         return orderNumber;
     }

@@ -99,7 +99,7 @@ public class FlooringMasteryView {
                                 List<OrderDto> collectionToClear = orderService.readOrdersFile(ordersDate, false);
                                 //clear the collection before returning to main menu
                                 collectionToClear.clear();
-                                break;
+                                runMenu();
                             }
                         } catch (IOException e) { //if file does not exist
                             System.out.println("Sorry, there are no existing orders for that date.");
@@ -167,8 +167,8 @@ public class FlooringMasteryView {
                         }
                         for (String k : productKeys) {
                             if (k.equals(productChoice)) { //if yes, get the key ad value and store them in a TaxDto
-                                System.out.println("Ok. Product details have been set to:" + productInfoMap.get(k).getProductType() +
-                                        ", with " + productInfoMap.get(k).getCostPerSquareFoot() + " cost per square foot and " +
+                                System.out.println("Ok. Product details have been set to: " + productInfoMap.get(k).getProductType() +
+                                        ", " + productInfoMap.get(k).getCostPerSquareFoot() + " cost per square foot and " +
                                         productInfoMap.get(k).getLaborCostPerSquareFoot() + " labor cost per square foot.\n");
                                 productDetails = new ProductDto(k, productInfoMap.get(k).getCostPerSquareFoot(), productInfoMap.get(k).getLaborCostPerSquareFoot());
                             }
@@ -245,7 +245,7 @@ public class FlooringMasteryView {
                         //clear the collection before running the menu again
                         List<OrderDto> collectionToClear = orderService.readOrdersFile(orderDtoDate, false);
                         collectionToClear.clear();
-                        break;
+                        runMenu();
 
                     case 3: //first retrieve the order, and then update the order
                         System.out.println("Edit an order:");
@@ -385,7 +385,6 @@ public class FlooringMasteryView {
                                 if (updateOrderChoice == 'y') {
                                     OrderDto updatedORder = orderService.updateOrder(retrievedOrder);
                                     System.out.println("The order has been updated successfully and saved to file.\nRedirecting back to the main menu...");
-
                                     //clear the collection before returning to main menu
                                     collectionToClear = orderService.readOrdersFile(orderByDate, false);
                                     collectionToClear.clear();
@@ -427,11 +426,18 @@ public class FlooringMasteryView {
                             System.out.println("Confirm deleting this order? y/n");
                             char deleteOption = input.next().charAt(0);
                             if (deleteOption == 'y') {
-                                orderService.removeOrder(removeOrderByDate, removeOrderbyNumber);
-                                System.out.println("Order deleted.");
+                                try { // exception handling - if there is only 1 order on file, it cannot writeToFile after this would be removed
+                                    orderService.removeOrder(removeOrderByDate, removeOrderbyNumber);
+                                    System.out.println("Order deleted.");
+                                } catch (Exception e) {
+                                    System.out.println("This is the only record on this date and as such it cannot be deleted. (no empty files allowed!)" +
+                                            "\nAll files with containing a single order record need to be deleted by an administrator."
+                                            + "\n--------------------------------------------");
+                                }
+                            } else {
+                                //if the user does not confirm
+                                System.out.println("Order has not been deleted.");
                             }
-                            //if the user does not confirm
-                            System.out.println("Order has not been deleted.");
                             //clear collection (in case te user chooses to continue)
                             collectionToClear = orderService.readOrdersFile(removeOrderByDate, false);
                             collectionToClear.clear();

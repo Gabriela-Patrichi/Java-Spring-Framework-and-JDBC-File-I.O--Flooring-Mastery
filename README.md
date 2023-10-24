@@ -1,7 +1,5 @@
 # Java Essentials Mastery Project: Flooring Mastery
 
-The goal of this project is to create an application that can read and write flooring orders for Wiley Edge Corp:
-
 **Project Specifications:**
 
 - The program was planned using flowcharts to describe the individual steps the program must complete, including any loops and conditional outputs.

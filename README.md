@@ -2,7 +2,7 @@
 
 The goal of this project is to create an application that can read and write flooring orders for Wiley Edge Corp:
 
-**Tech Specs:**
+**Project Specifications:**
 
 - The program was planned using flowcharts to describe the individual steps the program must complete, including any loops and conditional outputs.
 - Incorporates solid OOP principles and design: code is organised into well-named classes and logically distributed into the appropriate packages. It incorporates interfaces along with their implementation. DTO/POJO objects are used, as well as skilful Object Composition.
@@ -14,6 +14,7 @@ The goal of this project is to create an application that can read and write flo
 - Unit testing is performed at both the DAO and Service layers to validate the functionality and reliability of the code.
 - User input validation and exception handling have been implemented thoroughly.
 
+-----------------------------------------------------------------
 
 
 
